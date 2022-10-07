@@ -1,0 +1,108 @@
+<template>
+	<view class="rule">
+		<view class="rule-main">
+			<image class="rule-back" src="/static/images/icon-back.png" @click="back()">
+				<text class="rule-title">Rule of Activity</text>
+				<text class="rule-subTitle">Raffle prizes:</text>
+				<view v-for="item in awardList" :key="item.key" class="rule-row">
+					<text class="rule-item">{{item.pointsName}}</text>
+					<text class="rule-item">{{item.pointsValue}}</text>
+				</view>
+				<text class="rule-subTitle">Activity details:</text>
+				<text class="rule-item">The number of sweepstakes per day is {{drawCount}}</text>
+				<text class="rule-item">The number of raffle will be resumed at 12:00 am the next day</text>
+		</view>
+	</view>
+</template>
+
+<script>
+	var system = uni.getSystemInfoSync();
+	export default {
+		data() {
+			return {
+				screenHeight: system.screenHeight,
+				awardList: ['xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx', 'xxxxxxxx'],
+				drawCount: 0
+			}
+		},
+		onShow() {
+			getApp().getUserIsDisable();
+			this.getAwardList()
+			this.drawCount = getApp().getUserInfoSession().remainLotteryNum;
+		},
+		methods: {
+			getAwardList() {
+				const _this = this
+				var serverUrl = getApp().globalData.serverUrl;
+				uni.request({
+					method: "GET",
+					url: serverUrl + "/lottery/points/list",
+					success(result) {
+						const res = result.data
+						if (res.status == 200) {
+							_this.awardList = res.data
+						}
+					}
+				});
+			},
+			back() {
+				uni.navigateBack({
+					delta: 1
+				})
+			},
+		}
+	}
+</script>
+
+<style scoped>
+	.rule {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		background-color: #691b4f;
+		padding: 80rpx 50rpx;
+	}
+
+	.rule-main {
+		border-radius: 20px;
+	}
+
+	.rule-back {
+		position: absolute;
+		width: 40rpx;
+		height: 40rpx;
+		opacity: 0.8;
+	}
+
+	.rule-title {
+		color: white;
+		font-size: 40rpx;
+		font-weight: bold;
+		text-align: center;
+		margin: 45rpx 0 14rpx;
+	}
+
+	.rule-subTitle {
+		font-size: 32rpx;
+		font-weight: bold;
+		margin: 30rpx 0;
+		color: white;
+	}
+
+	.rule-row {
+		display: flex;
+		justify-content: space-between;
+		flex-direction: row;
+		color: white;
+		font-size: 32rpx;
+		width: 500rpx;
+	}
+
+	.rule-item {
+		font-size: 32rpx;
+		margin-bottom: 10rpx;
+		color: white;
+	}
+</style>

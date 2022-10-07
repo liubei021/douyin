@@ -1,0 +1,140 @@
+<template>
+<view class="page">
+	<view class="line"></view>
+		<view class="head">
+			<view class="single-line-box">
+				<text class="left-lable" style="align-self: center;">account :</text>
+				<view class="right-part">
+					<text class="right-content" style="align-self: center;">{{pageUserInfo.username}}</text>
+				</view>
+			</view>
+<!-- 			<view class="single-line-box">
+				<text class="left-lable" style="align-self: center;">Total recharge amount :</text>
+				<view class="right-part">
+					<text class="right-content" style="align-self: center;">{{pageUserInfo.rechargeMoney}}</text>
+				</view>
+			</view> -->
+			<view class="single-line-box">
+				<text class="left-lable" style="align-self: center;">integral :</text>
+				<view class="right-part">
+					<text class="right-content" style="align-self: center;">{{pageUserInfo.leftOverPoints}}</text>
+				</view>
+			</view>
+			<view class="single-line-box">
+				<text class="left-lable" style="align-self: center;">Amount to be withdrawn :</text>
+				<view class="right-part">
+					<text class="right-content" style="align-self: center;">{{pageUserInfo.exchangeMoney}}</text>
+				</view>
+			</view>
+			<view class="single-line-box">
+				<text class="left-lable" style="align-self: center;">Withdrawn amount :</text>
+				<view class="right-part">
+					<text class="right-content" style="align-self: center;">{{pageUserInfo.drawMoney}}</text>
+				</view>
+			</view>
+		</view>
+		<view>
+			<view @click="exchangeClick()">
+				<button type="primary" class="points-click">points</button>
+			</view>
+			<view @click="drawClick()">
+				<button type="primary" class="balance-click">balance</button>
+			</view>
+		</view>
+	</view>
+</view>
+</template>
+
+<script>
+	const app = getApp();
+	export default {
+		data() {
+			return {
+				pageUserInfo: {}
+			}
+		},
+		onShow() {
+			getApp().getUserIsDisable();
+			var me = this;
+			var myInfo = getApp().getUserInfoSession();
+			var myUserId = myInfo.id;
+			var serverUrl = app.globalData.serverUrl;
+			uni.request({
+				method: "GET",
+				url: serverUrl + "/userInfo/query?userId=" + myUserId,
+				success(result) {
+					if (result.data.status == 200) {
+						me.pageUserInfo = result.data.data;
+					}
+				}
+			});
+		},
+		methods: {
+			exchangeClick() {
+				uni.navigateTo({
+					animationType: "fade-in",
+					url: "exchange"
+				})
+			},
+			drawClick() {
+				uni.navigateTo({
+					animationType: "fade-in",
+					url: "draw"
+				})
+			},
+		}
+	}
+</script>
+
+<style>
+.page {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background-color: #181b27;
+}
+.head {
+	background-color: #000000;
+}
+.line {
+	height: 1rpx;
+	background-color: #393a41;
+	width: 750rpx;
+}
+.single-line-box {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	padding: 15rpx;
+}
+.left-lable {
+	color: #FFFFFF;
+	font-size: 15px;
+	font-weight: 500;
+}
+.right-part {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+}
+.right-content {
+	color: #bfbfbf;
+	font-size: 15px;
+	font-weight: 500;
+}
+.points-click{
+	position: fixed;
+	bottom: 20px;
+	left: 20px;
+	font-size: 15px;
+}
+
+.balance-click {
+	position: fixed;
+	right: 20px;
+	bottom: 20px;
+	font-size: 15px;
+}
+</style>

@@ -1,0 +1,117 @@
+<template>
+<view class="page">
+	<view class="line"></view>
+	<scroll-view scroll-y="true" @scrolltolower="pagingFansList()">
+		<view v-for="(record, index) in RecordList" :key="index">
+			<view class="points-item-box">
+				<view class="points-item-middle">
+					<text class="points-exchange">Recharge amount : {{record.rechargeMoney}}</text>
+					<text class="create-time">ON : {{record.rechargeNumber}}</text>
+					<text class="create-time">Time : {{record.rechargeTime}}</text>
+				</view>
+			</view>
+		</view>
+	</scroll-view>
+</view>
+</template>
+
+<script>
+	var system = uni.getSystemInfoSync();
+	var app = getApp();
+	export default {
+		data() {
+			return {
+				RecordList: [],
+				page: 0,
+				totalPage: 0,
+			}
+		},
+		onLoad() {
+			this.fetchList(0)
+		},
+		onShow() {
+			getApp().getUserIsDisable();
+		},
+		methods: {
+			fetchList(page) {
+				var me = this;
+				if (page == 0) {
+					me.RecordList = [];
+				}
+				page = page + 1;
+				var userId = getApp().getUserInfoSession().id;
+				var serverUrl = app.globalData.serverUrl;
+				uni.request({
+					method: "GET",
+					header: {
+						headerUserId: userId,
+						headerUserToken: app.getUserSessionToken()
+					},
+					url: serverUrl + "/record/queryRecordList?userId=" + userId + "&page=" + page + "&pageSize=10",
+					success(result) {
+						if (result.data.status == 200) {
+							var RecordList = result.data.data.rows;
+							var totalPage = result.data.data.total;
+							me.RecordList = me.RecordList.concat(RecordList);
+							me.page = page;
+							me.totalPage = totalPage;
+						} 
+					}
+				});
+			},
+			
+			// 上滑分页列表
+			pagingFansList() {	
+				if (this.page >= this.totalPage) {
+					return;
+				}
+				this.fetchList(this.page);
+			}
+		}
+	}
+</script>
+
+<style>
+.page {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background-color: #181b27;
+}
+
+.line {
+	height: 1rpx;
+	background-color: #393a41;
+	width: 750rpx;
+}
+
+.points-item-box {
+	display: flex;
+	flex-direction: column;
+	flex-direction: row;
+	justify-content: space-between;
+	padding: 30rpx;
+	margin-top: 10rpx;
+}
+
+.points-item-middle {
+	display: flex;
+	flex-direction: column;
+	margin-left: 30rpx;
+	padding-top: 20rpx;
+}
+.points-exchange {
+	color: #FFFFFF;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.create-time {
+	color: #FFFFFF;
+	font-size: 13px;
+	font-weight: 600;
+	margin-top: 2rpx;
+}
+</style>

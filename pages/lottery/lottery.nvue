@@ -1,0 +1,532 @@
+<template>
+	<view :class="sizeRatio">
+		<image class="lottery-bg" src="/static/lottery/bg.png" :style="{'height': screenHeight + 'px'}">
+			<image class="lottery-back" src="/static/images/icon-back.png" @click="back()">
+				<view class="lottery-title">
+					<text class="lottery-title-text">Lucky Roulette</text>
+				</view>
+				<view class="lottery-detail">
+					<text class="lottery-detail-btn" @click="goRule()">Activity Details >></text>
+				</view>
+				<view class="lottery-main">
+					<view class="lottery-roulette">
+						<view class="lottery-roulette" :class="[rotateStatus?getRotateClass():'rotate']">
+							<image class="lottery-roulette-img" src="/static/lottery/roulette.png">
+								<text v-for="(item,index) in awardList" :key="item.key" class="lottery-item"
+									:class="getClass(index)">{{item.pointsName}}</text>
+						</view>
+
+						<image v-if="drawCount > 0" class="lottery-btn-img" src="/static/lottery/btn.png"
+							@click="startDraw()">
+							<image v-else class="lottery-btn-img" src="/static/lottery/btn_disable.png">
+					</view>
+					<text class="lottery-times">Number of draws: {{drawCount}}</text>
+					<text class="lottery-record" @click="goRecord()">Winning Record</text>
+				</view>
+				<view class="lottery-list-box">
+					<text class="lottery-list-title">List of winners</text>
+					<swiper autoplay vertical interval="5000" class="lottery-list">
+						<swiper-item v-for="item in winnerList" :key="item.key">
+							<text class="lottery-list-text">Congrats to {{item.username}} for earning {{item.pointsValue}} points</text>
+						</swiper-item>
+					</swiper>
+				</view>
+				
+				<view v-if="toastStatus && toastMsg" class="lottery-toast">
+					<text class="lottery-toast-text">{{ toastMsg.pointsName }}</text>
+					<text class="lottery-toast-text">{{ toastMsg.pointsValue }}</text>
+				</view>
+	</view>
+</template>
+
+<script>
+	var system = uni.getSystemInfoSync();
+	export default {
+		data() {
+			return {
+				awardList: [],
+				winnerList: [],
+				page: 1,
+				drawCount: 0,
+				drawStatus: true,
+				screenHeight: system.screenHeight,
+				isIOS: uni.getSystemInfoSync().platform == "ios",
+				rotateStatus: false,
+				toastStatus: false,
+				// toastStatus: true,
+				toastMsg: null,
+				// toastMsg: {
+				// 	pointsName: 'second prize',
+				// 	pointsValue: 1000
+				// },
+			}
+		},
+		onShow() {
+			if(!getApp().userIsLogin()){
+				uni.navigateTo({
+					url: "../loginRegist/loginRegist",
+				})
+				return
+			}else {
+				getApp().getUserIsDisable();
+				this.getAwardList()
+				this.getWinnerList()
+				this.drawCount = getApp().getUserInfoSession().remainLotteryNum;
+				// console.log(this.screenHeight,system.screenWidth)
+				// console.log(this.isIOS)
+			}
+		},
+		computed: {
+			sizeRatio() {
+				const sizeRatio = system.screenHeight / system.screenWidth
+				let result = ''
+				if (sizeRatio < 2) {
+					// 16:9
+					result = 'lottery'
+				} else if (sizeRatio == 2) {
+					// 2:1
+					result = 'lottery_2'
+				} else if (sizeRatio > 2 && sizeRatio < 2.1) {
+					// 18.5:9
+					result = 'lottery_3'
+				} else if (sizeRatio >= 2.1 && sizeRatio < 2.15) {
+					// 19:9
+					result = 'lottery_4'
+				} else if (sizeRatio >= 2.15) {
+					// 19.5:9
+					result = 'lottery_5'
+				}
+				return result
+			}
+		},
+		methods: {
+			getAwardList() {
+				const _this = this
+				var serverUrl = getApp().globalData.serverUrl;
+				uni.request({
+					method: "GET",
+					url: serverUrl + "/lottery/points/list",
+					success(result) {
+						const res = result.data
+						if (res.status == 200) {
+							_this.awardList = res.data
+						}
+					}
+				});
+			},
+			getWinnerList() {
+				const _this = this
+				var serverUrl = getApp().globalData.serverUrl;
+				uni.request({
+					method: "GET",
+					url: serverUrl + "/lottery/users/list?page=" + _this.page + "&pageSize=10",
+					success(result) {
+						const res = result.data
+						if (res.status == 200) {
+							_this.winnerList = res.data.rows
+						}
+					}
+				});
+			},
+			startDraw() {
+				const _this = this
+				var userId = getApp().getUserInfoSession().id
+				var serverUrl = getApp().globalData.serverUrl;
+				if (_this.drawStatus) {
+					_this.drawStatus = false
+					uni.request({
+						method: "GET",
+						url: serverUrl + "/lottery/query/lottery?userId=" + userId,
+						success(result) {
+							const res = result.data
+							if (res.status == 200) {
+								getApp().getUserInfo()
+								_this.getWinnerList()
+								_this.toastMsg = res.data
+								_this.rotateStatus = true
+
+								setTimeout(() => {
+									_this.drawCount = getApp().getUserInfoSession().remainLotteryNum;
+								}, 500)
+								setTimeout(() => {
+									_this.toastStatus = true
+								}, 2000)
+								setTimeout(() => {
+									_this.rotateStatus = false
+								}, 3500)
+								setTimeout(() => {
+									_this.toastStatus = false
+									_this.drawStatus = true
+								}, 5000)
+							} else {
+								uni.showToast({
+									title: res.msg,
+									icon: "none",
+									duration: 3000
+								});
+								_this.drawStatus = true
+							}
+						}
+					});
+				}
+
+			},
+			getRotateClass() {
+
+				let result = ''
+				if (this.toastMsg) {
+					this.awardList.forEach((x, index) => {
+						if (x.pointsName === this.toastMsg.pointsName) {
+							result = index + 1
+						}
+					})
+				}
+				return "rotate_" + result
+			},
+			getClass(index) {
+				const num = index + 1
+				return "lottery-item-" + num
+			},
+			back() {
+				uni.navigateBack({
+					delta: 1
+				})
+			},
+			goRule() {
+				uni.navigateTo({
+					url: "../lottery/rule",
+				});
+			},
+			goRecord() {
+				uni.navigateTo({
+					url: "../lottery/record",
+				});
+			},
+		}
+	}
+</script>
+
+<style scoped>
+	.lottery,
+	.lottery_2,
+	.lottery_3,
+	.lottery_4,
+	.lottery_5,
+		{
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+	}
+
+
+	.lottery-bg {
+		position: absolute;
+		width: 750rpx;
+	}
+
+	.lottery-back {
+		width: 40rpx;
+		height: 40rpx;
+		opacity: 0.8;
+		margin: 70rpx 35rpx 35rpx;
+	}
+
+	.lottery-title {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+	}
+
+	.lottery .lottery-title {
+		margin-top: 0rpx;
+	}
+
+	.lottery_2 .lottery-title {
+		margin-top: 25rpx;
+	}
+
+	.lottery_3 .lottery-title {
+		margin-top: 30rpx;
+	}
+
+	.lottery_4 .lottery-title {
+		margin-top: 35rpx;
+	}
+
+	.lottery_5 .lottery-title {
+		margin-top: 40rpx;
+	}
+
+	.lottery-title-text {
+		/* background: rgba(0, 0, 0, 0.5); */
+		color: white;
+		font-size: 64rpx;
+		font-weight: bold;
+		transform: rotate(-4deg);
+		height: 90rpx;
+		width: 520rpx;
+		text-align: center;
+	}
+
+	.lottery-detail {
+		display: flex;
+		align-items: flex-end;
+	}
+
+	.lottery .lottery-detail {
+		margin-top: 18rpx;
+	}
+
+	.lottery_2 .lottery-detail {
+		margin-top: 24rpx;
+	}
+
+	.lottery_3 .lottery-detail {
+		margin-top: 27rpx;
+	}
+
+	.lottery_4 .lottery-detail {
+		margin-top: 30rpx;
+	}
+
+	.lottery_5 .lottery-detail {
+		margin-top: 35rpx;
+	}
+
+	.lottery-detail-btn {
+		width: 337rpx;
+		margin-right: 25rpx;
+		/* background: rgba(0, 0, 0, 0.5); */
+		color: white;
+		text-align: center;
+		font-weight: bold;
+		font-size: 32rpx;
+	}
+
+	.lottery .lottery-detail-btn {
+		height: 65rpx;
+		line-height: 65rpx;
+	}
+
+	.lottery_2 .lottery-detail-btn {
+		height: 71rpx;
+		line-height: 71rpx;
+	}
+
+	.lottery_3 .lottery-detail-btn {
+		height: 73rpx;
+		line-height: 73rpx;
+	}
+
+	.lottery_4 .lottery-detail-btn {
+		height: 75rpx;
+		line-height: 75rpx;
+	}
+
+	.lottery_5 .lottery-detail-btn {
+		height: 76rpx;
+		line-height: 76rpx;
+	}
+
+	.lottery-main {
+		display: flex;
+		align-items: center;
+	}
+
+	.lottery .lottery-main {
+		margin-top: 20rpx;
+	}
+
+	.lottery_2 .lottery-main {
+		margin-top: 115rpx;
+	}
+
+	.lottery_3 .lottery-main {
+		margin-top: 125rpx;
+	}
+
+	.lottery_4 .lottery-main {
+		margin-top: 135rpx;
+	}
+
+	.lottery_5 .lottery-main {
+		margin-top: 145rpx;
+	}
+
+	.lottery-roulette {
+		width: 650rpx;
+		height: 650rpx;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.lottery-roulette-img {
+		position: absolute;
+		width: 650rpx;
+		height: 650rpx;
+	}
+
+	.rotate_1 {
+		transform: rotate(390deg);
+		transition: transform 2s ease-in-out;
+	}
+
+	.rotate_2 {
+		transform: rotate(690deg);
+		transition: transform 2s ease-in-out;
+	}
+
+	.rotate_3 {
+		transform: rotate(450deg);
+		transition: transform 2s ease-in-out;
+	}
+
+	.rotate_4 {
+		transform: rotate(630deg);
+		transition: transform 3s ease-in-out;
+	}
+
+	.rotate_5 {
+		transform: rotate(510deg);
+		transition: transform 2s ease-in-out;
+	}
+
+
+	.rotate_6 {
+		transform: rotate(570deg);
+		transition: transform 2s ease-in-out;
+	}
+
+	.rotate {
+		transform: rotate(0deg);
+		transition: transform 2s ease-in-out;
+	}
+
+	.lottery-btn-img {
+		width: 170rpx;
+		height: 228rpx;
+		position: absolute;
+		margin: -50rpx 0 0 5rpx;
+	}
+
+	.lottery-item {
+		color: white;
+		font-weight: bold;
+		font-size: 40rpx;
+		width: 140rpx;
+		text-align: center;
+	}
+
+	.lottery-item-1 {
+		margin: 95rpx 30rpx 37rpx 150rpx;
+	}
+
+	.lottery-item-2 {
+		margin: 95rpx 150rpx 37rpx 30rpx;
+	}
+
+	.lottery-item-3 {
+		margin: 37rpx 130rpx 37rpx 0rpx;
+	}
+
+	.lottery-item-4 {
+		margin: 37rpx 0rpx 37rpx 130rpx;
+	}
+
+	.lottery-item-5 {
+		margin: 37rpx 30rpx 0rpx 150rpx;
+	}
+
+	.lottery-item-6 {
+		margin: 37rpx 150rpx 0rpx 30rpx;
+	}
+
+	.lottery-times {
+		color: white;
+		font-weight: bold;
+		margin-top: 20rpx;
+	}
+
+	.lottery-record {
+		border-radius: 35rpx;
+		width: 350rpx;
+		height: 70rpx;
+		line-height: 70rpx;
+		margin-top: 20rpx;
+		text-align: center;
+		background: #dd354d;
+		color: white;
+		font-weight: bold;
+	}
+	
+	.lottery-list-box {
+		position: fixed;
+		width: 750rpx;
+		height: 150rpx;
+		background: #ce2b46;
+		bottom: 0;
+		padding: 10rpx 40rpx;
+	}
+
+	
+	.lottery-list-title {
+		color: white;
+		font-weight: bold;
+	}
+
+	.lottery-list{
+		margin-top: 10rpx;
+		height: 60rpx;
+		background: white;
+		border-radius: 15px;
+	}
+
+	.lottery-list-text {
+		line-height: 60rpx;
+		padding: 0 30rpx;
+		font-size: 32rpx;
+	}
+
+	.lottery-toast {
+		position: fixed;
+		background: rgba(0, 0, 0, 0.6);
+		border-radius: 10px;
+		width: 250rpx;
+		text-align: center;
+		left: 255rpx;
+		padding: 10rpx;
+	}
+
+	.lottery .lottery-toast {
+		top: 600rpx;
+	}
+
+	.lottery_2 .lottery-toast {
+		top: 730rpx;
+	}
+
+	.lottery_3 .lottery-toast {
+		top: 750rpx;
+	}
+
+	.lottery_4 .lottery-toast {
+		top: 765rpx;
+	}
+
+	.lottery_5 .lottery-toast {
+		top: 795rpx;
+	}
+
+	.lottery-toast-text {
+		font-size: 36rpx;
+		font-weight: bold;
+		color: white;
+		text-align: center;
+		margin: 3px 0;
+	}
+</style>

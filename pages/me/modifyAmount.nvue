@@ -1,0 +1,118 @@
+<template>
+<view class="page">
+	<view class="line"></view>
+	<scroll-view scroll-y="true" @scrolltolower="pagingFansList()">
+		<view v-for="(draw, index) in drawList" :key="index">
+			<view class="draw-item-box">
+				<view class="draw-item-middle">
+					<text class="draw-exchange">Amount : {{draw.drawMoney}}</text>
+					<text class="create-time">ON : {{draw.drawOrderNo}}</text>
+					<text class="create-time">Time : {{draw.createTime}}</text>
+				</view>
+			</view>
+		</view>
+	</scroll-view>
+</view>
+</template>
+
+<script>
+	var system = uni.getSystemInfoSync();
+	var app = getApp();
+	export default {
+		data() {
+			return {
+				drawList: [],
+				page: 0,
+				totalPage: 0,
+			}
+		},
+		onLoad() {
+			this.fetchList(0)
+		},
+		onShow() {
+			getApp().getUserIsDisable();
+		},
+		methods: {
+			fetchList(page) {
+				var me = this;
+				if (page == 0) {
+					me.drawList = [];
+				}
+				page = page + 1;
+				var userId = getApp().getUserInfoSession().id;
+				var serverUrl = app.globalData.serverUrl;
+				uni.request({
+					method: "GET",
+					header: {
+						headerUserId: userId,
+						headerUserToken: app.getUserSessionToken()
+					},
+					url: serverUrl + "/draw/queryDrawList?userId=" + userId + "&page=" + page + "&pageSize=10",
+					success(result) {
+						if (result.data.status == 200) {
+							var drawList = result.data.data.rows;
+							var totalPage = result.data.data.total;
+							console.log("数据：" + drawList)
+							me.drawList = me.drawList.concat(drawList);
+							me.page = page;
+							me.totalPage = totalPage;
+						} 
+					}
+				});
+			},
+			
+			// 上滑分页列表
+			pagingFansList() {	
+				if (this.page >= this.totalPage) {
+					return;
+				}
+				this.fetchList(this.page);
+			}
+		}
+	}
+</script>
+
+<style>
+.page {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background-color: #181b27;
+}
+
+.line {
+	height: 1rpx;
+	background-color: #393a41;
+	width: 750rpx;
+}
+
+.draw-item-box {
+	display: flex;
+	flex-direction: column;
+	flex-direction: row;
+	justify-content: space-between;
+	padding: 30rpx;
+	margin-top: 10rpx;
+}
+
+.draw-item-middle {
+	display: flex;
+	flex-direction: column;
+	margin-left: 30rpx;
+	padding-top: 20rpx;
+}
+.draw-exchange {
+	color: #FFFFFF;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.create-time {
+	color: #FFFFFF;
+	font-size: 13px;
+	font-weight: 600;
+	margin-top: 2rpx;
+}
+</style>
