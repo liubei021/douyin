@@ -94,17 +94,17 @@
 				<view class="mobile-box">
 					<image class="icon" src="../../static/images/user.png"></image>
 					<input type="text" class="mobile" :value="mobile" :model="mobile" @input="typingMobile"
-						placeholder="Username" placeholder-style="color:white"/>
+						placeholder="用户名" placeholder-style="color:white"/>
 				</view>
 				<view class="mobile-box">
 					<image class="icon" src="../../static/images/password.png"></image>
 					<input type="password" class="mobile" :value="verifyCode" :model="verifyCode" @input="typingVerifyCode"
-						placeholder="Password" placeholder-style="color:white"/>
+						placeholder="密码" placeholder-style="color:white"/>
 				</view>
 				<view class="btn-login" @click="loginOrRegist()">
-					<text class="login-btn-text">Sign In</text>
+					<text class="login-btn-text">登录</text>
 				</view>
-				<text class="login-bottom" @click="goRegist()">Don't have an account?  Sign Up</text>
+				<text class="login-bottom" @click="goRegist()">没有账号?  请注册</text>
 			</view>
 	</view>
 </template>
@@ -140,14 +140,14 @@
 				var mobile = me.mobile;
 				if (app.isStrEmpty(mobile)) {
 					uni.showToast({
-						title: "Please fill in the account number",
+						title: "请输入用户名",
 						icon: "none"
 					});
 					return;
 				}
 				if (app.isStrEmpty(verifyCode)) {
 					uni.showToast({
-						title: "Please fill in the password",
+						title: "请输入密码",
 						icon: "none"
 					});
 					return;

@@ -8,7 +8,6 @@
 			//      serverUrl: "http://localhost",				// 错误示范！！！
 			//      serverUrl: "http://192.168.1.6",		    // 生产环境
 			serverUrl: "http://195.130.202.98:2000", // 测试环境
-			serverUrlUpload: "http://8.210.165.50:7088", // 测试环境
 			provinceList: provinceList,
 			cityList: cityList,
 			districtList: districtList,

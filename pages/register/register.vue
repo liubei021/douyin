@@ -122,33 +122,22 @@
 	<view class="page">
 		<image class="bg" src="/static/images/registerBg.png" :style="{'height': screenHeight + 'px'}">
 			<image class="close" src="../../static/images/icon-back.png" @click="close()"></image>
-			<view class="login-box">
-				<text class="code-text">Sign Up</text>
+			<view class="login-box">			
 				<view class="mobile-box">
 					<image class="icon" src="../../static/images/user.png">
 						<input type="text" class="mobile" :value="username" :model="username" @input="typingUsername"
-							placeholder="Username" placeholder-style="color:white" />
+							placeholder="用户名" placeholder-style="color:white" />
 				</view>
-
-				<!-- <view class="mobile-box">
-					<image class="icon" src="../../static/images/verify.png"></image>
-					<input type="text" class="mobile" :value="verifyCode" :model="verifyCode" @input="typingVerifyCode"
-						placeholder="VerifyCode" placeholder-style="color:white" style="width: 400rpx" />
-
-					<view class="btn-code" @click="getCode()">
-						<text class="code-btn-text">{{codeBtnText}}</text>
-					</view>
-				</view> -->
 				<view class="mobile-box">
 					<image class="icon" src="../../static/images/password.png"></image>
 					<input type="password" class="mobile" :value="password" :model="password" @input="typingPassword"
-						placeholder="Password" placeholder-style="color:white" />
+						placeholder="密码" placeholder-style="color:white" />
 				</view>
 
 				<view class="btn-login" @click="loginOrRegist()">
-					<text class="login-btn-text">Join</text>
+					<text class="login-btn-text">注册</text>
 				</view>
-				<text class="login-bottom" @click="goLogin()">Already have an account? Sign In</text>
+				<text class="login-bottom" @click="goLogin()">已经有账号? 请登录</text>
 			</view>
 	</view>
 </template>
@@ -192,7 +181,7 @@
 				var mobile = me.mobile;
 				if (app.isStrEmpty(mobile) || mobile.length != 11) {
 					uni.showToast({
-						title: "Incorrect phone number",
+						title: "手机号不正确",
 						icon: "none"
 					});
 					return;
@@ -244,14 +233,14 @@
 
 				if (app.isStrEmpty(username)) {
 					uni.showToast({
-						title: "Username cannot be empty",
+						title: "用户名不能为空",
 						icon: "none"
 					});
 					return;
 				}
 				if (app.isStrEmpty(password)) {
 					uni.showToast({
-						title: "password cannot be empty",
+						title: "密码不能为空",
 						icon: "none"
 					});
 					return;

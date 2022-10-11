@@ -10,14 +10,6 @@
 			}
 		},
 		{
-            "path" : "pages/friend/friend",
-            "style": {
-                "app-plus": {
-                	"titleNView": false //禁用原生导航栏
-                }
-            }
-        },
-		{
 		    "path" : "pages/vlog/vlog",
 		    "style": {
 		        "app-plus": {
@@ -80,30 +72,6 @@
                 }
             }
         },
-		{
-		    "path" : "pages/lottery/lottery",
-		    "style": {
-		        "app-plus": {
-		        	"titleNView": false //禁用原生导航栏
-		        }
-		    }
-		},
-		{
-		    "path" : "pages/lottery/rule",
-		    "style": {
-		        "app-plus": {
-		        	"titleNView": false //禁用原生导航栏
-		        }
-		    }
-		},
-		{
-		    "path" : "pages/lottery/record",
-		    "style": {
-		        "app-plus": {
-		        	"titleNView": false //禁用原生导航栏
-		        }
-		    }
-		},
         {
             "path" : "pages/qrcode/qrcode",
 			"style": {
