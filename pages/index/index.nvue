@@ -177,63 +177,6 @@
 							var vlogList = result.data.data.list;
 							var publicTotalPage = result.data.data.totalPage;
 							me.publicVlogList = me.publicVlogList.concat(vlogList);
-							// me.publicVlogList = [{
-							// 		"id": 1,
-							// 		"title": "asasas",
-							// 		"url": "http://8.210.165.50:7068/profile/upload/2022/09/26/Snaptik_7113920195235679493_imran-nausheen_20220926222515A736.mp4",
-							// 		"cover": "http://8.210.165.50:7068/profile/upload/2022/10/05/23_20221005163947A850.png",
-							// 		"status": 1,
-							// 	},
-							// 	{
-							// 		"id": 2,
-							// 		"title": "sdsds",
-							// 		"url": "http://8.210.165.50:7068/profile/upload/2022/09/26/Snaptik_7135060776284474651_misel-ayub_20220926222933A774.mp4",
-							// 		"cover": "http://8.210.165.50:7068/profile/upload/2022/10/05/Snipaste_2022-10-05_16-35-55_20221005163707A843.png",
-							// 		"status": 1,
-							// 	},
-							// 	{
-							// 		"id": 1,
-							// 		"title": "asasas",
-							// 		"url": "http://8.210.165.50:7068/profile/upload/2022/09/26/Snaptik_7113920195235679493_imran-nausheen_20220926222515A736.mp4",
-							// 		"cover": "http://8.210.165.50:7068/profile/upload/2022/10/05/23_20221005163947A850.png",
-							// 		"status": 1,
-							// 	},
-							// 	{
-							// 		"id": 2,
-							// 		"title": "sdsds",
-							// 		"url": "http://8.210.165.50:7068/profile/upload/2022/09/26/Snaptik_7135060776284474651_misel-ayub_20220926222933A774.mp4",
-							// 		"cover": "http://8.210.165.50:7068/profile/upload/2022/10/05/Snipaste_2022-10-05_16-35-55_20221005163707A843.png",
-							// 		"status": 1,
-							// 	},
-							// 	{
-							// 		"id": 1,
-							// 		"title": "asasas",
-							// 		"url": "http://8.210.165.50:7068/profile/upload/2022/09/26/Snaptik_7113920195235679493_imran-nausheen_20220926222515A736.mp4",
-							// 		"cover": "http://8.210.165.50:7068/profile/upload/2022/10/05/23_20221005163947A850.png",
-							// 		"status": 1,
-							// 	},
-							// 	{
-							// 		"id": 2,
-							// 		"title": "sdsds",
-							// 		"url": "http://8.210.165.50:7068/profile/upload/2022/09/26/Snaptik_7135060776284474651_misel-ayub_20220926222933A774.mp4",
-							// 		"cover": "http://8.210.165.50:7068/profile/upload/2022/10/05/Snipaste_2022-10-05_16-35-55_20221005163707A843.png",
-							// 		"status": 1,
-							// 	},
-							// 	{
-							// 		"id": 1,
-							// 		"title": "asasas",
-							// 		"url": "http://8.210.165.50:7068/profile/upload/2022/09/26/Snaptik_7113920195235679493_imran-nausheen_20220926222515A736.mp4",
-							// 		"cover": "http://8.210.165.50:7068/profile/upload/2022/10/05/23_20221005163947A850.png",
-							// 		"status": 1,
-							// 	},
-							// 	{
-							// 		"id": 2,
-							// 		"title": "sdsds",
-							// 		"url": "http://8.210.165.50:7068/profile/upload/2022/09/26/Snaptik_7135060776284474651_misel-ayub_20220926222933A774.mp4",
-							// 		"cover": "http://8.210.165.50:7068/profile/upload/2022/10/05/Snipaste_2022-10-05_16-35-55_20221005163707A843.png",
-							// 		"status": 1,
-							// 	},
-							// ]
 							me.publicPage = publicPage;
 							me.publicTotalPage = publicTotalPage;
 						}
