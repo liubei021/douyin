@@ -5,7 +5,7 @@
 		right: 0;
 		top: 0;
 		bottom: 0;
-		background-color: #000000;
+		background-color: white;
 	}
 
 	.vlog-list {
@@ -14,25 +14,27 @@
 		flex-direction: row;
 		flex-wrap: wrap;
 		justify-content: flex-start;
-		background-color: #000000;
+		padding: 15rpx 15rpx 0 0;
 	}
 
 	.vlog-cover {
-		width: 375rpx;
+		width: 350rpx;
 		height: 540rpx;
-		border-width: 1rpx;
+		border-radius: 15rpx;
+		margin: 0 0 15rpx 15rpx;
 	}
-
 	.vlog-title {
 		background-color: rgba(0, 0, 0, 0.15);
 		position: absolute;
-		width: 375rpx;
+		width: 350rpx;
 		height: 60rpx;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
-		padding-left: 15rpx;
+		padding-left: 20rpx;
+		margin-left: 15rpx;
 		top: 480rpx;
+		border-radius: 0 0 15rpx 15rpx;
 	}
 </style>
 
@@ -73,9 +75,9 @@
 		onLoad() {
 			var screenHeight = system.safeArea.bottom + 50;
 			this.screenHeight = screenHeight;
+			this.register()
 		},
 		onShow() {
-			this.register()
 			this.myPublicList(0);
 		},
 		methods: {
