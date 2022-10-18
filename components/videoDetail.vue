@@ -204,11 +204,6 @@
 				this.objectFit = "cover";
 			}
 
-			var myUserInfo = getApp().getUserInfoSession();
-			if (myUserInfo != null) {
-				this.userId = getApp().getUserInfoSession().id;
-			}
-
 			// 查询首页短视频列表
 			// this.displayVideoPaging(this.page + 1, true);
 			

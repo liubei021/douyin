@@ -8,31 +8,31 @@
 		background-color: #000000;
 	}
 
-	.vlog-list {
-		position: relative;
+	.vlog-item {
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
 		justify-content: flex-start;
-		background-color: #000000;
+		align-items: center;
+		/* height: 165rpx; */
+	}
+
+	.vlog-rank {
+		width: 100rpx;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.vlog-cover {
-		width: 375rpx;
-		height: 540rpx;
-		border-width: 1rpx;
+		width: 135rpx;
+		height: 135rpx;
+		border-radius: 50%;
 	}
 
-	.vlog-title {
-		background-color: rgba(0, 0, 0, 0.15);
-		position: absolute;
-		width: 375rpx;
-		height: 60rpx;
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		padding-left: 15rpx;
-		top: 480rpx;
+	.vlog-name {
+		margin-left: 20px;
 	}
 </style>
 
@@ -41,18 +41,21 @@
 		<scroll-view :style="{height: screenHeight + 'px'}" scroll-y="true" @scrolltolower="loadMore">
 
 			<view class="vlog-list">
-				<block v-for="(vlog,index) in publicVlogList" :key="index">
-					<image class="vlog-cover" style="align-self: center;" :src="vlog.cover" @click="goToVlog(vlog)"
-						mode="aspectFill"></image>
-					<view class="vlog-title">
-						<text style="color: #FFFFFF;font-size: 18px;">{{vlog.title}}</text>
+				<block v-for="(vlog,index) in publicVlogList" :key="index" class="vlog-item"
+					:style="{height: screenHeight/9.5 + 'px'}">
+					<view class="vlog-rank">
+						<text style="color: #FFFFFF;font-size: 24px;font-weight: bold;">{{index +1}}</text>
+					</view>
+					<image class="vlog-cover" style="align-self: center;" :src="vlog.cover" mode="aspectFill"></image>
+					<view class="vlog-name">
+						<text style="color: #FFFFFF;font-size: 24px;">{{vlog.title}}</text>
 					</view>
 				</block>
 			</view>
 
 			<view v-if="publicVlogList.length == 0"
 				style="background-color: #000000;width: 750rpx;height: 300rpx;display: flex;flex-direction: row;justify-content: center;position: relative;">
-				<text style="color: #FFFFFF;font-size: 14px;margin-top: 200rpx;">尚无视频</text>
+				<text style="color: #FFFFFF;font-size: 14px;margin-top: 200rpx;">尚无排名</text>
 			</view>
 		</scroll-view>
 	</view>
@@ -75,7 +78,6 @@
 			this.screenHeight = screenHeight;
 		},
 		onShow() {
-			this.register()
 			this.myPublicList(0);
 		},
 		methods: {
@@ -85,18 +87,6 @@
 				} else {
 					this.myPublicList(this.publicPage);
 				}
-			},
-			register() {
-				var clientid = plus.push.getClientInfo().clientid
-				var deviceId = clientid.substring(0, 20)
-				var serverUrl = app.globalData.serverUrl;
-				uni.request({
-					method: "POST",
-					url: serverUrl + "/user/register?deviceId=" + deviceId,
-					success(result) {
-						console.log(result)
-					}
-				});
 			},
 			myPublicList(publicPage) {
 				var me = this;
@@ -120,11 +110,6 @@
 						}
 					}
 				});
-			},
-			goToVlog(vlog) {
-				uni.navigateTo({
-					url: "../vlog/vlog?vlog=" + JSON.stringify(vlog)
-				})
 			},
 		}
 	}

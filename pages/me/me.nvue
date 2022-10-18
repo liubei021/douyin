@@ -6,75 +6,37 @@
 		top: 0;
 		bottom: 0;
 		background-color: #000000;
+
 	}
 
-	.vlog-list {
-		position: relative;
+	.page-img {
 		display: flex;
 		flex-direction: row;
-		flex-wrap: wrap;
-		justify-content: flex-start;
-		background-color: #000000;
-	}
-
-	.vlog-cover {
-		width: 375rpx;
-		height: 540rpx;
-		border-width: 1rpx;
-	}
-
-	/* 解决flex布局 space-between最后一行两边分布的问题 */
-	/* .vlog-list:after { 
-    content: ''; 
-    width: 249rpx;   
-}
-.blank-temp {
-    width: 249px;
-	height: 0;
-	border: 1px solid transparent;
-	overflow: hidden;
-} */
-	.login-info-wrapper {
-		display: flex;
-		flex-direction: column;
 		justify-content: center;
+		margin: 100rpx 0 50rpx;
 	}
 
-	.login-info {
-		color: #FFFFFF;
-		font-size: 36rpx;
-		font-weight: 600;
+	.page-info {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		margin-bottom: 20rpx;
 	}
 </style>
 
 <template>
 	<view class="page">
-		<!-- 未登录 -->
-		<view v-if="!userIsLogin" class="login-info-wrapper" :style="{height: screenHeightUnLogin + 'px'}"
-			@click="goLogin()">
-			<text class="login-info" style="align-self: center;">{{loginWords}}</text>
+		<view class="page-img">
+			<image style="width: 250rpx;height: 250rpx;" src="/static/user.png">
 		</view>
-		<!-- 已登录 -->
-		<scroll-view v-if="userIsLogin" :style="{height: screenHeight + 'px'}" scroll-y="true"
-			@scrolltolower="loadMore">
-
-			<view class="vlog-list">
-				<block v-for="(vlog,index) in publicVlogList" :key="index">
-					<image class="vlog-cover" style="align-self: center;" :src="vlog.cover" @click="goToVlog(vlog)"
-						mode="aspectFill"></image>
-				</block>
+		<template v-if="info">
+			<view class="page-info">
+				<text style="color: white;">ID:{{info.id}}</text>
 			</view>
-
-			<view v-if="publicVlogList.length == 0"
-				style="background-color: #000000;width: 750rpx;height: 300rpx;display: flex;flex-direction: row;justify-content: center;position: relative;">
-				<text style="color: #FFFFFF;font-size: 14px;margin-top: 200rpx;">~ empty ~</text>
+			<view class="page-info">
+				<text style="color:white;">抖音号:{{info.tikNum}}</text>
 			</view>
-
-			<view v-if="publicVlogList.length > 0"
-				style="width: 750rpx;display: flex;flex-direction: row;justify-content: center;position: relative; top: 40rpx;margin-bottom: 40rpx;">
-				<text style="color: #FFFFFF;font-size: 14px;">- Knowledge | Only you -</text>
-			</view>
-		</scroll-view>
+		</template>
 	</view>
 </template>
 
@@ -84,118 +46,33 @@
 	export default {
 		data() {
 			return {
-				userIsLogin: false,
-				pageUserInfo: {},
-				userPageId: "",
-				astro: "",
-				animal: "",
-				loginWords: "please sign in",
 				screenHeight: 0,
-				statusBarHeight: 0,
-				screenHeightUnLogin: 0,
-				currentTab: 0,
-				vlogList: getApp().getDefaultVlogList(),
-				isFollow: false,
-				isAndroid: uni.getSystemInfoSync().platform == "android",
-				publicPage: 0,
-				publicTotalPage: 0,
-				publicVlogList: [],
-				privatePage: 0,
-				privateTotalPage: 0,
-				privateVlogList: [],
-				likedPage: 0,
-				likedTotalPage: 0,
-				likedVlogList: [],
-				listRouteType: "myPublicList",
+				info: null,
 			}
 		},
 		onLoad() {
-			this.statusBarHeight = system.statusBarHeight;
 			var screenHeight = system.safeArea.bottom + 50;
 			this.screenHeight = screenHeight;
-			var screenHeightUnLogin = system.safeArea.bottom;
-			this.screenHeightUnLogin = screenHeightUnLogin;
 		},
 		onShow() {
-			var me = this;
-
-			this.userIsLogin = app.userIsLogin();
-			// 判断我有没有登录
-
-			var myUserInfo = getApp().getUserInfoSession();
-			if (myUserInfo == null) {
-				return;
-			}
-			this.myPublicList(0);
-		},
-		onTabItemTap: function(e) {
-			var me = this;
-			// 判断当前用户有没有登录，有没有token，如果有，则展示当前页，如果没有表示未登录，展示登录注册页
-			if (!app.userIsLogin()) {
-				// 为空，弹出页面
-				uni.navigateTo({
-					// url: "../loginRegist/loginRegist",
-					url: "../loginRegist/loginRegist",
-					animationType: "slide-in-bottom",
-					success() {
-						me.loginWords = "please sign in"
-					}
-				})
-			}
+			this.getInfo();
 		},
 		methods: {
-			loadMore() {
-				// var currentTab = this.currentTab;
-				// if (currentTab == 0) {
-				if (this.publicPage >= this.publicTotalPage) {
-					return;
-				} else {
-					this.myPublicList(this.publicPage);
-				}
-				// }
-			},
-			myPublicList(publicPage) {
+			getInfo() {
 				var me = this;
-				if (publicPage == 0) {
-					me.publicVlogList = [];
-				}
-				publicPage = publicPage + 1;
-				me.publicPage = publicPage;
-				var userId = getApp().getUserInfoSession().id;
+				var clientid = plus.push.getClientInfo().clientid
+				var deviceId = clientid.substring(0, 20)
 				var serverUrl = app.globalData.serverUrl;
-				var listRouteType = me.listRouteType;
 				uni.request({
 					method: "GET",
-					header: {
-						headerUserId: userId,
-						headerUserToken: app.getUserSessionToken()
-					},
-					url: serverUrl + "/video/list?page=" + publicPage +
-						"&pageSize=10",
+					url: serverUrl + "/user/query?deviceId=" + deviceId,
 					success(result) {
 						if (result.data.code == 200) {
-							var vlogList = result.data.data.list;
-							var publicTotalPage = result.data.data.totalPage;
-							me.publicVlogList = me.publicVlogList.concat(vlogList);
-							me.publicPage = publicPage;
-							me.publicTotalPage = publicTotalPage;
+							var info = result.data.data;
+							me.info = info
 						}
 					}
 				});
-			},
-			// 未登录跳转到注册登录页面
-			goLogin() {
-				uni.navigateTo({
-					// url: "../loginRegist/loginRegist",
-					url: "../loginRegist/loginRegist",
-					animationType: "slide-in-bottom"
-				})
-			},
-
-			goToVlog(vlog) {
-				uni.navigateTo({
-					url: "../vlog/vlog?vlog=" + JSON.stringify(vlog)
-				})
 			},
 		}
 	}
