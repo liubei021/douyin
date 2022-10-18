@@ -94,13 +94,6 @@
 		<view class="header" :style="{marginTop:statusBarHeight+'px'}">
 			<image class="header-right-search" src="../../static/icon-back.png"
 				style="width: 40rpx;height: 40rpx;opacity: 0.8;" @click="back()">
-				<view class="header-center">
-					<view class="header-item" @click="tapFollow(1)">
-						<text class="header-item-title"></text>
-					</view>
-				</view>
-				<image class="header-right-search" src="../../static/images/icon-search.png"
-					style="width: 50rpx;height: 50rpx;opacity: 0;">
 		</view>
 
 	</view>
@@ -119,12 +112,12 @@
 			return {
 				vlog: null,
 				playStatus: true,
+				statusBarHeight: 0,
+				screenHeight: 0
 			}
 		},
 		onLoad(option) {
 			this.statusBarHeight = system.statusBarHeight;
-			var screenWidth = system.screenWidth;
-			this.vlogWidth = (screenWidth - 10) / 2;
 
 			var screenHeight = system.safeArea.bottom + 50;
 			this.screenHeight = screenHeight;
