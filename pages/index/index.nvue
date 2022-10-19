@@ -89,8 +89,7 @@
 				}
 			},
 			register() {
-				var clientid = plus.push.getClientInfo().clientid
-				var deviceId = clientid.substring(0, 20)
+				var deviceId = plus.push.getClientInfo().clientid
 				var serverUrl = app.globalData.serverUrl;
 				uni.request({
 					method: "POST",
