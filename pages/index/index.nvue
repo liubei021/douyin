@@ -53,8 +53,8 @@
 			</view>
 
 			<view v-if="publicVlogList.length == 0"
-				style="background-color: #000000;width: 750rpx;height: 300rpx;display: flex;flex-direction: row;justify-content: center;position: relative;">
-				<text style="color: #FFFFFF;font-size: 14px;margin-top: 200rpx;">尚无视频</text>
+				style="background-color: white;width: 750rpx;height: 300rpx;display: flex;flex-direction: row;justify-content: center;position: relative;">
+				<text style="color: black;font-size: 14px;margin-top: 200rpx;">尚无视频</text>
 			</view>
 		</scroll-view>
 	</view>

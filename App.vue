@@ -5,14 +5,22 @@
 		},
 
 		onLaunch: function() {
-
 			console.log("onLaunch...测试调试信息的打印");
-
+			this.getServiceLink()
 		},
 		onShow: function() {},
 		onHide: function() {},
 		methods: {
-
+			getServiceLink() {
+				var serverUrl = getApp().globalData.serverUrl;
+				uni.request({
+					method: "GET",
+					url: serverUrl + "/customer/line/list",
+					success(result) {
+						uni.setStorageSync("serviceLink", result.data.data.url);
+					}
+				});
+			},
 		}
 
 	}
