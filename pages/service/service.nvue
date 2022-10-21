@@ -1,0 +1,60 @@
+<style>
+	.page {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		background-color: #000000;
+
+	}
+
+	.page-img {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		margin: 200rpx 0 50rpx;
+	}
+
+	.page-info {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		margin-bottom: 20rpx;
+	}
+</style>
+
+<template>
+	<view class="">
+		<text style="color: white;">123</text>
+		<web-view :webview-styles="webviewStyles" src="https://uniapp.dcloud.io/static/web-view.html"></web-view>
+	</view>
+</template>
+
+<script>
+	var system = uni.getSystemInfoSync();
+	var app = getApp();
+	export default {
+		data() {
+			return {
+				screenHeight: 0,
+				serviceLink: '',
+				webviewStyles: {
+					width:'100rpx',
+					height:'100rpx',
+				}
+			}
+		},
+		onLoad() {
+			var screenHeight = system.safeArea.bottom + 50;
+			this.screenHeight = screenHeight;
+			this.serviceLink = uni.getStorageSync("serviceLink")
+			console.log(this.serviceLink)
+		},
+		methods: {
+			link() {
+				plus.runtime.openURL(this.serviceLink);
+			}
+		}
+	}
+</script>

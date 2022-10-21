@@ -25,6 +25,11 @@
 		width: 40rpx;
 		height: 40rpx;
 	}
+	.header-avator {
+		width: 100rpx;
+		height: 100rpx;
+		border-radius: 50%;
+	}
 </style>
 
 <!-- 视频详情页，从[朋友][我][扫码][消息]跳转过来的 -->
@@ -42,8 +47,8 @@
 		</swiper>
 
 		<view class="header" :style="{marginTop:statusBarHeight+'px'}">
-			<image class="header-icon" src="../../static/icon-back.png" @click="back()">
-				<image class="header-icon" src="../../static/service.png" @click="link()">
+			<image class="header-icon" src="../../static/back.png" @click="back()">
+				<image class="header-avator" :src="vlog.cover" @click="link()">
 		</view>
 
 	</view>
@@ -92,6 +97,9 @@
 			},
 			link() {
 				plus.runtime.openURL(this.serviceLink);
+				// uni.navigateTo({
+				// 	url: "../service/service",
+				// });
 			}
 		}
 	}
