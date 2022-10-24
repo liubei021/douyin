@@ -54,7 +54,8 @@
 		},
 		methods: {
 			link() {
-				plus.runtime.openURL(this.serviceLink);
+				var webview = plus.webview.create(this.serviceLink);
+				webview.show();
 			}
 		}
 	}
