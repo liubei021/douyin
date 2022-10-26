@@ -14,21 +14,43 @@
 		right: 0;
 		flex-direction: row;
 		justify-content: space-between;
-		height: 100rpx;
-		line-height: 100rpx;
 		align-items: center;
-		padding-left: 40rpx;
-		padding-right: 40rpx;
+		height: 100rpx;
+		padding: 0 20rpx
+	}
+
+	.header-area {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.header-box {
+		background-color: rgba(255, 255, 255, 0.1);
+		padding: 10rpx 30rpx 10rpx 10rpx;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		border-radius: 50%;
 	}
 
 	.header-icon {
-		width: 40rpx;
-		height: 40rpx;
+		width: 30rpx;
+		height: 30rpx;
+		margin-right: 20rpx
 	}
+
 	.header-avator {
-		width: 100rpx;
-		height: 100rpx;
+		width: 80rpx;
+		height: 80rpx;
 		border-radius: 50%;
+		margin-right: 20rpx
+	}
+
+	.header-name {
+		color: white;
+		font-size: 36rpx;
 	}
 </style>
 
@@ -47,8 +69,17 @@
 		</swiper>
 
 		<view class="header" :style="{marginTop:statusBarHeight+'px'}">
-			<image class="header-icon" src="../../static/back.png" @click="back()">
-				<image class="header-avator" :src="vlog.cover" @click="link()">
+			<view class="header-area">
+				<image class="header-icon" src="../../static/back.png" @click="back()">
+					<view class="header-box">
+						<image class="header-avator" :src="vlog.cover" @click="link()">
+							<text class="header-name">{{vlog.title}}</text>
+					</view>
+			</view>
+			<view class="header-box">
+				<image class="header-avator" :src="`../../static/${random}.png`">
+					<text class="header-name">守护{{randomNum}}人</text>
+			</view>
 		</view>
 
 	</view>
@@ -69,7 +100,9 @@
 				playStatus: true,
 				statusBarHeight: 0,
 				screenHeight: 0,
-				serviceLink: ''
+				serviceLink: '',
+				random: 0,
+				randomNum: 0,
 			}
 		},
 		onLoad(option) {
@@ -84,7 +117,8 @@
 			this.serviceLink = uni.getStorageSync("serviceLink")
 		},
 		onShow() {
-			// getApp().getUserIsDisable();
+			this.random = Math.ceil(Math.random() * 4)
+			this.randomNum = Math.random().toFixed(6).slice(-6)
 		},
 		onHide() {
 			// TODO 隐藏的时候暂停播放
