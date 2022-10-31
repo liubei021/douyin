@@ -300,7 +300,6 @@
 					userId = myUserInfo.id;
 				}
 
-
 				var serverUrl = app.globalData.serverUrl;
 				uni.request({
 					method: "GET",
